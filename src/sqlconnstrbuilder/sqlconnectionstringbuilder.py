@@ -76,7 +76,7 @@ class SqlConnectionStringBuilder:
         self.Trusted_Connection = kwargs.get(ConnParamKeywords.TRUSTED_CONNECTION.value, None)
         self.Application_Name = kwargs.get(ConnParamKeywords.APP.value, None)
 
-        self.__connectionstring = kwargs.get(SQLCONNBUILDER_CONNSTRING_PARAM, '')
+        self.ConnectionString = kwargs.get(SQLCONNBUILDER_CONNSTRING_PARAM, '')
 
     @property
     def ConnectionString(self) -> str:
@@ -87,10 +87,10 @@ class SqlConnectionStringBuilder:
     def ConnectionString(self, var):
         self.__connectionstring = var
 
-        connstring_dict = dict((k.upper(), v) for k, v in dict(param.split("=") for param in var.split(";") if len(param)==2).items())
+        connstring_dict = dict((k.upper(), v) for k, v in dict(param.split("=") for param in var.split(";") if len(param)>=1).items())
         
         self.Application_Name = connstring_dict[ConnParamKeywords.APP.name] if ConnParamKeywords.APP.name in connstring_dict else self.Application_Name
-        self.Driver = connstring_dict[ConnParamKeywords.DRIVER.name] if ConnParamKeywords.DRIVER.name in connstring_dict else self.Driver
+        self.Driver = connstring_dict[ConnParamKeywords.DRIVER.name].strip(r"{}") if ConnParamKeywords.DRIVER.name in connstring_dict else self.Driver
         self.Server = connstring_dict[ConnParamKeywords.SERVER.name] if ConnParamKeywords.SERVER.name in connstring_dict else self.Server
         self.Database = connstring_dict[ConnParamKeywords.DATABASE.name] if ConnParamKeywords.DATABASE.name in connstring_dict else self.Database
         self.User = connstring_dict[ConnParamKeywords.UID.name] if ConnParamKeywords.UID.name in connstring_dict else self.User
